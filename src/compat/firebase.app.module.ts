@@ -41,7 +41,7 @@ const FIREBASE_APP_PROVIDER = {
   deps: [
     FIREBASE_OPTIONS,
     NgZone,
-    [new Optional(), FIREBASE_APP_NAME]
+    [Optional, FIREBASE_APP_NAME]
   ]
 };
 

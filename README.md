@@ -72,6 +72,8 @@ export class AppComponent {
 
 [Stackblitz Template](https://stackblitz.com/edit/angular-fire-start) - Remember to set your Firebase configuration in `app/app.module.ts`.
 
+[Upgrading to v22.0 RC? Check out our guide.](docs/version-22-upgrade.md)
+
 [Upgrading from v6.0? Check out our guide.](docs/version-7-upgrade.md)
 
 ### Sample app

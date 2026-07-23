@@ -27,10 +27,10 @@ const LOCALHOSTS = ['localhost', '0.0.0.0', '127.0.0.1'];
 const isLocalhost = typeof window !== 'undefined' && LOCALHOSTS.includes(window.location.hostname);
 
 export function appCheckInstanceFactory(fn: (injector: Injector) => FirebaseAppCheck) {
-   return (zone: NgZone, injector: Injector, platformId: unknown) => {
+   return (zone: NgZone, injector: Injector, platformId: object) => {
     // Node should use admin token provider, browser devmode and localhost should use debug token
     if (!isPlatformServer(platformId) && (isDevMode() || isLocalhost)) {
-      globalThis.FIREBASE_APPCHECK_DEBUG_TOKEN ??= true;
+      (globalThis as any).FIREBASE_APPCHECK_DEBUG_TOKEN ??= true;
     }
     const appCheck = zone.runOutsideAngular(() => fn(injector));
     return new AppCheck(appCheck);
@@ -40,7 +40,7 @@ export function appCheckInstanceFactory(fn: (injector: Injector) => FirebaseAppC
 const APP_CHECK_INSTANCES_PROVIDER = {
   provide: AppCheckInstances,
   deps: [
-    [new Optional(), PROVIDED_APP_CHECK_INSTANCES ],
+    [Optional, PROVIDED_APP_CHECK_INSTANCES ],
   ]
 };
 
@@ -48,7 +48,7 @@ const DEFAULT_APP_CHECK_INSTANCE_PROVIDER = {
   provide: AppCheck,
   useFactory: defaultAppCheckInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_APP_CHECK_INSTANCES ],
+    [Optional, PROVIDED_APP_CHECK_INSTANCES ],
     FirebaseApp,
     PLATFORM_ID,
   ]

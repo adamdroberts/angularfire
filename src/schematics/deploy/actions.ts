@@ -143,7 +143,7 @@ const getPackageJson = (context: BuilderContext, workspaceRoot: string, options:
     const externalDependencies = server?.options?.externalDependencies || [];
     const bundleDependencies = server?.options?.bundleDependencies ?? true;
     if (bundleDependencies) {
-      externalDependencies.forEach(externalDependency => {
+      (externalDependencies as string[]).forEach(externalDependency => {
         const packageVersion = findPackageVersion(packageManager, externalDependency);
         if (packageVersion) { dependencies[externalDependency] = packageVersion; }
       });
@@ -356,7 +356,7 @@ export const deployToCloudRun = async (
   const deployArguments: any[] = [];
   const cloudRunOptions = options.cloudRunOptions || {};
   Object.entries(DEFAULT_CLOUD_RUN_OPTIONS).forEach(([k, v]) => {
-    cloudRunOptions[k] ||= v;
+    (cloudRunOptions as Record<string, any>)[k] ||= v;
   });
   // lean on the schema for validation (rather than sanitize)
   if (cloudRunOptions.cpus) { deployArguments.push('--cpu', cloudRunOptions.cpus); }
@@ -461,7 +461,7 @@ or the new Firebase App Hosting product https://firebase.google.com/docs/app-hos
 
   const logger = new winston.transports.Console({
     level: 'info',
-    format: winston.format.printf((info) => {
+    format: winston.format.printf((info: any) => {
       const emulator = info[tripleBeam.SPLAT as any]?.[1]?.metadata?.emulator;
       const text = info[tripleBeam.SPLAT as any]?.[0];
       if (text?.replace) {

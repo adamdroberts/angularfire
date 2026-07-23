@@ -39,9 +39,9 @@ const STATIC_VALUES = { numbers: 0, booleans: false, strings: undefined };
 // TODO look into the types here, I don't like the anys
 const proxyAll = (observable: Observable<Parameter[]>, as: 'numbers' | 'booleans' | 'strings') => new Proxy(
   observable.pipe(mapToObject(as as any)), {
-    get: (self, name: string) => self[name] || observable.pipe(
+    get: (self, name: string) => (self as any)[name] || observable.pipe(
       map(all => all.find(p => p.key === name)),
-      map(param => param ? param[AS_TO_FN[as]]() : STATIC_VALUES[as]),
+      map(param => param ? (param as any)[(AS_TO_FN as any)[as]]() : (STATIC_VALUES as any)[as]),
       distinctUntilChanged()
     )
   }
@@ -95,7 +95,7 @@ const scanToParametersArray = (
   remoteConfig: Observable<firebase.remoteConfig.RemoteConfig | undefined>
 ): OperatorFunction<Record<string, firebase.remoteConfig.Value>, Parameter[]> => pipe(
   withLatestFrom(remoteConfig),
-  scan((existing, [all, rc]) => {
+  scan((existing: Parameter[], [all, rc]: [Record<string, firebase.remoteConfig.Value>, firebase.remoteConfig.RemoteConfig | undefined]) => {
     // SEMVER use "new Set" to unique once we're only targeting es6
     // at the scale we expect remote config to be at, we probably won't see a performance hit from this unoptimized uniqueness
     // implementation.
@@ -105,7 +105,7 @@ const scanToParametersArray = (
       const updatedValue = all[key];
       return updatedValue ? new Parameter(key, rc ? rc.fetchTimeMillis : -1, updatedValue.getSource(), updatedValue.asString())
         : existing.find(p => p.key === key);
-    });
+    }).filter((p): p is Parameter => !!p);
   }, [] as Parameter[])
 );
 
@@ -146,7 +146,7 @@ export class AngularFireRemoteConfig {
         }
         return rc;
       }, [settings, defaultConfig])),
-      startWith<firebase.remoteConfig.RemoteConfig, undefined>(undefined),
+      startWith(undefined as any),
       shareReplay({ bufferSize: 1, refCount: false })
     ) as Observable<any>;
 
@@ -155,7 +155,7 @@ export class AngularFireRemoteConfig {
     );
 
     const default$: Observable<Record<string, firebase.remoteConfig.Value>> = of(Object.keys(defaultConfig || {}).reduce(
-      (c, k) => ({ ...c, [k]: new Value('default', defaultConfig[k].toString()) }), {}
+      (c, k) => ({ ...c, [k]: new Value('default', defaultConfig ? defaultConfig[k].toString() : '') }), {}
     ));
 
     // we should filter out the defaults we provided to RC, since we have our own implementation
@@ -262,8 +262,8 @@ export function scanToObject<T extends ConfigTemplate>(to: 'numbers' | 'booleans
     scan(
       (c, p: Parameter) => ({
         ...c, [p.key]: typeof to === 'object' ?
-          p[typedMethod(to[p.key])]() :
-          p[AS_TO_FN[to]]()
+          (p as any)[typedMethod(to[p.key])]() :
+          (p as any)[(AS_TO_FN as any)[to]]()
       }),
       typeof to === 'object' ?
         to as T & Record<string, string | undefined> :
@@ -288,8 +288,8 @@ export function mapToObject<T extends ConfigTemplate>(to: 'numbers' | 'booleans'
     map((params: Parameter[]) => params.reduce(
       (c, p) => ({
         ...c, [p.key]: typeof to === 'object' ?
-          p[typedMethod(to[p.key])]() :
-          p[AS_TO_FN[to]]()
+          (p as any)[typedMethod(to[p.key])]() :
+          (p as any)[(AS_TO_FN as any)[to]]()
       }),
       typeof to === 'object' ?
         to as T & Record<string, string | undefined> :

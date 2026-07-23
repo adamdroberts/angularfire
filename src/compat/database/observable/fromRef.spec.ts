@@ -12,9 +12,9 @@ import { rando } from '../../../../src/utils';
 describe('fromRef', () => {
   let db: AngularFireDatabase;
   let ref: (path: string) => firebase.database.Reference;
-  let batch = {};
-  const items = [{ name: 'one' }, { name: 'two' }, { name: 'three' }].map(item => ({ key: rando(), ...item }));
-  Object.keys(items).forEach((key) => {
+  let batch: any = {};
+  const items: any = [{ name: 'one' }, { name: 'two' }, { name: 'three' }].map(item => ({ key: rando(), ...item }));
+  Object.keys(items).forEach((key: any) => {
     const itemValue = items[key];
     batch[itemValue.key] = itemValue;
   });
@@ -85,7 +85,7 @@ describe('fromRef', () => {
 
     // Error
     const errorObservable = fromRef({
-        once: (event, snap, err) => err()
+        once: (event: any, snap: any, err: any) => err()
       } as any,
       'value',
       'once',
@@ -168,7 +168,7 @@ describe('fromRef', () => {
         count = count + 1;
         const { type, payload } = change;
         expect(type).toEqual('child_added');
-        expect(payload.val()).toEqual(batch[payload.key]);
+        expect(payload.val()).toEqual(batch[payload.key as any]);
         if (count === items.length) {
           done();
           sub.unsubscribe();
@@ -253,7 +253,7 @@ describe('fromRef', () => {
           child = snap.val();
           return true;
         });
-        expect(child).toEqual(items[0]);
+        expect(child as any).toEqual(items[0]);
         done();
       });
     });

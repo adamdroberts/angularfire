@@ -34,12 +34,12 @@ export interface AngularFireAnalytics extends ɵPromiseProxy<firebase.analytics.
 })
 export class AngularFireAnalytics {
 
-  private measurementId: string;
+  private measurementId!: string;
   private analyticsInitialized = new Promise<void>(() => undefined);
 
   async updateConfig(config: Config) {
     await this.analyticsInitialized;
-    window[GTAG_FUNCTION_NAME](GTAG_CONFIG_COMMAND, this.measurementId, { ...config, update: true });
+    (window as any)[GTAG_FUNCTION_NAME](GTAG_CONFIG_COMMAND, this.measurementId, { ...config, update: true });
   }
 
   constructor(
@@ -57,7 +57,7 @@ export class AngularFireAnalytics {
 
     if (isPlatformBrowser(platformId)) {
 
-      window[DATA_LAYER_NAME] = window[DATA_LAYER_NAME] || [];
+      (window as any)[DATA_LAYER_NAME] = (window as any)[DATA_LAYER_NAME] || [];
 
       // It turns out we can't rely on the measurementId in the Firebase config JSON
       // this identifier is not stable. firebase/analytics does a call to get a fresh value
@@ -74,7 +74,7 @@ export class AngularFireAnalytics {
       };
 
       const patchGtag = (fn?: (...args: any[]) => void) => {
-        window[GTAG_FUNCTION_NAME] = (...args: any[]) => {
+        (window as any)[GTAG_FUNCTION_NAME] = (...args: any[]) => {
           if (fn) {
             fn(...args);
           }
@@ -101,7 +101,7 @@ export class AngularFireAnalytics {
            * caused issue #2505 where analytics no longer sent any data.
            */
           (function(..._args: any[]) {
-            window[DATA_LAYER_NAME].push(arguments);
+            (window as any)[DATA_LAYER_NAME].push(arguments);
           })(...args);
         };
       };
@@ -110,7 +110,7 @@ export class AngularFireAnalytics {
       // to gtag before ['js' timestamp] weren't getting parsed, so let's make a promise
       // that resolves when firebase/analytics has configured gtag.js that we wait on
       // before sending anything
-      const firebaseAnalyticsAlreadyInitialized = window[DATA_LAYER_NAME].some(parseMeasurementId);
+      const firebaseAnalyticsAlreadyInitialized = ((window as any)[DATA_LAYER_NAME] as any[]).some(parseMeasurementId);
       if (firebaseAnalyticsAlreadyInitialized) {
         this.analyticsInitialized = Promise.resolve();
         patchGtag();

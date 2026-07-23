@@ -31,7 +31,7 @@ export function AIInstanceFactory(fn: (injector: Injector) => FirebaseAI) {
 const AI_INSTANCES_PROVIDER = {
   provide: AIInstances,
   deps: [
-    [new Optional(), PROVIDED_AI_INSTANCES ],
+    [Optional, PROVIDED_AI_INSTANCES ],
   ]
 };
 
@@ -39,7 +39,7 @@ const DEFAULT_AI_INSTANCE_PROVIDER = {
   provide: AI,
   useFactory: defaultAIInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_AI_INSTANCES ],
+    [Optional, PROVIDED_AI_INSTANCES ],
     FirebaseApp,
   ]
 };
@@ -71,7 +71,7 @@ export function provideAI(fn: (injector: Injector) => FirebaseAI, ...deps: any[]
         Injector,
         ɵAngularFireSchedulers,
         FirebaseApps,
-        [new Optional(), AppCheckInstances ],
+        [Optional, AppCheckInstances ],
         ...deps,
       ]
     }

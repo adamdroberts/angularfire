@@ -59,7 +59,7 @@ export const ɵlazySDKProxy = (klass: any, observable: Observable<any>, zone: Ng
       });
       // recurse the proxy
       return new Proxy(() => undefined, {
-          get: (_, name) => promise[name],
+          get: (_, name) => (promise as any)[name],
           // TODO handle callbacks as transparently as I can
           apply: (self, _, args) => promise.then(it => {
             const res = it?.(...args);
@@ -77,11 +77,14 @@ export const ɵlazySDKProxy = (klass: any, observable: Observable<any>, zone: Ng
 export const ɵapplyMixins = (derivedCtor: any, constructors: any[]) => {
   constructors.forEach((baseCtor) => {
     Object.getOwnPropertyNames(baseCtor.prototype || baseCtor).forEach((name) => {
-      Object.defineProperty(
-        derivedCtor.prototype,
-        name,
-        Object.getOwnPropertyDescriptor(baseCtor.prototype || baseCtor, name)
-      );
+      const descriptor = Object.getOwnPropertyDescriptor(baseCtor.prototype || baseCtor, name);
+      if (descriptor) {
+        Object.defineProperty(
+          derivedCtor.prototype,
+          name,
+          descriptor
+        );
+      }
     });
   });
 };

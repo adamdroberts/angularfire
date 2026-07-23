@@ -22,11 +22,14 @@
   "homepage": "https://github.com/angular/angularfire#readme",
   "author": "angular,firebase",
   "license": "MIT",
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
   "peerDependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/core": "^21.0.0",
-    "@angular/platform-browser": "^21.0.0",
-    "@angular/platform-server": "^21.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/platform-browser": "^22.0.0",
+    "@angular/platform-server": "^22.0.0",
     "rxjs": "~7.8.0",
     "firebase-tools": "^14.0.0 || ^15.0.0"
   },
@@ -37,8 +40,8 @@
   "dependencies": {
     "firebase": "^12.4.0",
     "rxfire": "^6.1.0",
-    "@angular-devkit/schematics": "^21.0.0",
-    "@schematics/angular": "^21.0.0",
+    "@angular-devkit/schematics": "^22.0.0",
+    "@schematics/angular": "^22.0.0",
     "tslib": "^2.3.0"
   },
   "ng-update": {

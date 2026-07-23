@@ -29,7 +29,7 @@ export class UserTrackingService implements OnDestroy {
         this.disposables = [
           // TODO add credential tracking back in
           authState(auth).subscribe(user => {
-            setUserId(analytics, user?.uid);
+            setUserId(analytics, user?.uid || null);
             resolveInitialized();
           }),
         ];

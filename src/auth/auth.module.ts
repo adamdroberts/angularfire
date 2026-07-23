@@ -31,7 +31,7 @@ export function authInstanceFactory(fn: (injector: Injector) => FirebaseAuth) {
 const AUTH_INSTANCES_PROVIDER = {
   provide: AuthInstances,
   deps: [
-    [new Optional(), PROVIDED_AUTH_INSTANCES ],
+    [Optional, PROVIDED_AUTH_INSTANCES ],
   ]
 };
 
@@ -39,7 +39,7 @@ const DEFAULT_AUTH_INSTANCE_PROVIDER = {
   provide: Auth,
   useFactory: defaultAuthInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_AUTH_INSTANCES ],
+    [Optional, PROVIDED_AUTH_INSTANCES ],
     FirebaseApp,
   ]
 };
@@ -70,7 +70,7 @@ export function provideAuth(fn: (injector: Injector) => FirebaseAuth, ...deps: a
         Injector,
         ɵAngularFireSchedulers,
         FirebaseApps,
-        [new Optional(), AppCheckInstances ],
+        [Optional, AppCheckInstances ],
         ...deps,
       ]
     }

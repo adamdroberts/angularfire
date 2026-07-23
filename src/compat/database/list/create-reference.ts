@@ -36,11 +36,11 @@ export function createListReference<T= any>(query: DatabaseQuery, afDatabase: An
             return {
               ...a.payload.val() as T,
               ...{
-                [options.idField]: a.key
+                [options.idField]: a.key ?? ''
               }
-            };
+            } as T & Record<string, string>;
           } else {
-            return a.payload.val() as T & Record<string, string>
+            return a.payload.val() as T & Record<string, string>;
           }
         })),
         pendingUntilEvent(injector)

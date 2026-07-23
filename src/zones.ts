@@ -124,7 +124,7 @@ const zoneWrapFn = (
 export const ɵzoneWrap = <T= unknown>(it: T, blockUntilFirst: boolean, logLevel?: LogLevel): T => {
   logLevel ||= blockUntilFirst ? LogLevel.WARN : LogLevel.VERBOSE;
   // function() is needed for the arguments object
-  return function () {
+  return function (this: any) {
     let taskDone: VoidFunction | undefined;
     const _arguments = arguments;
     let schedulers: ɵAngularFireSchedulers;
@@ -181,7 +181,7 @@ export const ɵzoneWrap = <T= unknown>(it: T, blockUntilFirst: boolean, logLevel
     } else if (typeof ret === 'function' && taskDone) {
       // Handle unsubscribe
       // function() is needed for the arguments object
-      return function () {
+      return function (this: any) {
         setTimeout(taskDone, 0);
         return ret.apply(this, arguments);
       };

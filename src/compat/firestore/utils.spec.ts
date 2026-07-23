@@ -9,12 +9,12 @@ export interface Stock {
 
 export const FAKE_STOCK_DATA = { name: 'FAKE', price: 1 };
 
-export const randomName = (firestore): string => firestore.collection('a').doc().id;
+export const randomName = (firestore: any): string => firestore.collection('a').doc().id;
 
 export const createRandomStocks = async (
   firestore: firebase.firestore.Firestore,
   collectionRef: firebase.firestore.CollectionReference,
-  numberOfItems
+  numberOfItems: number
 ) => {
   // Create a batch to update everything at once
   const batch = TestBed.runInInjectionContext(() => firestore.batch());
@@ -31,25 +31,25 @@ export const createRandomStocks = async (
   return names;
 };
 
-export function deleteThemAll(names, ref) {
-  const promises = names.map(name => ref.doc(name).delete());
+export function deleteThemAll(names: any, ref: any) {
+  const promises = names.map((name: any) => ref.doc(name).delete());
   return Promise.all(promises);
 }
 
-export function delayUpdate<T>(collection: AngularFirestoreCollection<T>|firebase.firestore.CollectionReference, path, data, delay = 250) {
+export function delayUpdate<T>(collection: AngularFirestoreCollection<T>|firebase.firestore.CollectionReference, path: any, data: any, delay = 250) {
   setTimeout(() => {
-    TestBed.runInInjectionContext(() => collection.doc(path).update(data));
+    TestBed.runInInjectionContext(() => (collection as any).doc(path).update(data));
   }, delay);
 }
 
-export function delayAdd<T>(collection: AngularFirestoreCollection<T>|firebase.firestore.CollectionReference, path, data, delay = 250) {
+export function delayAdd<T>(collection: AngularFirestoreCollection<T>|firebase.firestore.CollectionReference, path: any, data: any, delay = 250) {
   setTimeout(() => {
-    TestBed.runInInjectionContext(() => collection.doc(path).set(data));
+    TestBed.runInInjectionContext(() => (collection as any).doc(path).set(data));
   }, delay);
 }
 
-export function delayDelete<T>(collection: AngularFirestoreCollection<T>|firebase.firestore.CollectionReference, path, delay = 250) {
+export function delayDelete<T>(collection: AngularFirestoreCollection<T>|firebase.firestore.CollectionReference, path: any, delay = 250) {
   setTimeout(() => {
-    TestBed.runInInjectionContext(() => collection.doc(path).delete());
+    TestBed.runInInjectionContext(() => (collection as any).doc(path).delete());
   }, delay);
 }

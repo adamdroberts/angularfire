@@ -5,15 +5,15 @@ import { Action, DocumentChange, DocumentChangeAction, DocumentChangeType, Query
 import { fromCollectionRef } from '../observable/fromRef';
 
 
-type ActionTupe = [Action<QuerySnapshot<firebase.firestore.DocumentData>>, Action<QuerySnapshot<firebase.firestore.DocumentData>>]
+type ActionTupe = [Action<QuerySnapshot<firebase.firestore.DocumentData>> | undefined, Action<QuerySnapshot<firebase.firestore.DocumentData>>];
 /**
  * Return a stream of document changes on a query. These results are not in sort order but in
  * order of occurence.
  */
-export function docChanges<T>(query: Query, scheduler?: SchedulerLike): Observable<DocumentChangeAction<T>[]> {
+export function docChanges<T>(query: Query<any>, scheduler?: SchedulerLike): Observable<DocumentChangeAction<T>[]> {
   return fromCollectionRef(query, scheduler)
     .pipe(
-      startWith<Action<QuerySnapshot<firebase.firestore.DocumentData>>, undefined>(undefined),
+      startWith(undefined as any),
       pairwise(),
       map((actionTuple: ActionTupe) => {
         const [priorAction, action] = actionTuple;
@@ -51,12 +51,12 @@ export function docChanges<T>(query: Query, scheduler?: SchedulerLike): Observab
  * Return a stream of document changes on a query. These results are in sort order.
  */
 export function sortedChanges<T>(
-  query: Query,
+  query: Query<any>,
   events: DocumentChangeType[],
   scheduler?: SchedulerLike): Observable<DocumentChangeAction<T>[]> {
   return docChanges<T>(query, scheduler)
     .pipe(
-      scan((current, changes) => combineChanges<T>(current, changes.map(it => it.payload), events), []),
+      scan((current: DocumentChange<T>[], changes: DocumentChangeAction<T>[]) => combineChanges<T>(current, changes.map(it => it.payload), events), [] as DocumentChange<T>[]),
       distinctUntilChanged(), // cut down on unneed change cycles
       map(changes => changes.map(c => ({ type: c.type, payload: c } as DocumentChangeAction<T>))));
 }

@@ -47,7 +47,7 @@ export const setDefaultProjectInFirebaseRc = (projectRoot: string, projectId: st
   if (existsSync(path)) {
     try {
       rc = JSON.parse(readFileSync(path).toString());
-    } catch (e) {
+    } catch (e: any) {
       throw new SchematicsException(`Error when parsing ${path}: ${e.message}`);
     }
   }
@@ -119,7 +119,7 @@ export const addFirestoreToFirebaseJson = (
       firebaseJson.firestore = { rules: 'firestore.rules', indexes: 'firestore.indexes.json' };
       writeFileSync(join(projectRoot, 'firebase.json'), stringifyFormatted(firebaseJson));
     }
-  } catch (e) {
+  } catch (e: any) {
     context.logger.warn(
       `Could not update firebase.json with the firestore section (${e.message}). Check firebase.json ` +
       'and add { "firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" } } manually.'

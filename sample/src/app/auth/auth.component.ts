@@ -3,12 +3,13 @@ import { Auth, signInAnonymously, signOut, User } from '@angular/fire/auth';
 import { map, startWith, switchMap, tap } from 'rxjs/operators';
 import { AsyncPipe, isPlatformBrowser, isPlatformServer } from '@angular/common';
 import cookies from 'js-cookie';
-import { from, Observable } from 'rxjs';
+import { of, from, Observable } from 'rxjs';
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, beforeAuthStateChanged, onIdTokenChanged } from "firebase/auth";
 import { ɵzoneWrap } from "@angular/fire";
 
 // TODO bring this to RxFire
 function _authState(auth: Auth): Observable<User|null> {
+  if (!auth) { return of(null); }
   return from(auth.authStateReady()).pipe(
     switchMap(() => new Observable<User|null>((subscriber) => {
       const unsubscribe = onAuthStateChanged(
@@ -43,8 +44,8 @@ export const authState = ɵzoneWrap(_authState, true);
 })
 export class AuthComponent implements OnDestroy {
 
-  private readonly auth = inject(Auth);
-  protected readonly authState = authState(this.auth);
+  private readonly auth = inject(Auth, { optional: true });
+  protected readonly authState = authState(this.auth!);
 
   private readonly transferState = inject(TransferState);
   private readonly transferStateKey = makeStateKey<string|undefined>("auth:uid");
@@ -63,7 +64,7 @@ export class AuthComponent implements OnDestroy {
   private readonly unsubscribeFromBeforeAuthStateChanged: (() => void) | undefined;
 
   constructor() {
-    if (isPlatformBrowser(inject(PLATFORM_ID))) {
+    if (isPlatformBrowser(inject(PLATFORM_ID)) && this.auth) {
 
       this.unsubscribeFromOnIdTokenChanged = onIdTokenChanged(this.auth, async (user) => {
           if (user) {
@@ -100,15 +101,15 @@ export class AuthComponent implements OnDestroy {
   }
 
   async logout() {
-    return await signOut(this.auth);
+    return this.auth && await signOut(this.auth);
   }
 
   async loginAnonymously() {
-    return await signInAnonymously(this.auth);
+    return this.auth && await signInAnonymously(this.auth);
   }
 
   async loginWithGoogle() {
-    return await signInWithPopup(this.auth, new GoogleAuthProvider());
+    return this.auth && await signInWithPopup(this.auth, new GoogleAuthProvider());
   }
 
 }

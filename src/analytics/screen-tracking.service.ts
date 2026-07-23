@@ -1,7 +1,7 @@
-import { ComponentFactoryResolver, Injectable, Injector, NgZone, OnDestroy, Optional } from '@angular/core';
+import { Injectable, Injector, NgZone, OnDestroy, Optional, reflectComponentType } from '@angular/core';
 import { VERSION } from '@angular/fire';
 import { Title } from '@angular/platform-browser';
-import { ActivationEnd, Router, ɵEmptyOutletComponent } from '@angular/router';
+import { ActivationEnd, Router } from '@angular/router';
 import { registerVersion } from 'firebase/app';
 import { Observable, Subscription, of } from 'rxjs';
 import { distinctUntilChanged, filter, groupBy, map, mergeMap, pairwise, startWith, switchMap } from 'rxjs/operators';
@@ -49,7 +49,6 @@ const getScreenInstanceID = (params: Record<string, any>) => {
 export const ɵscreenViewEvent = (
   router: Router,
   title: Title|null,
-  componentFactoryResolver: ComponentFactoryResolver,
 ): Observable<{
   [SCREEN_NAME_KEY]: string,
   [PAGE_PATH_KEY]: string,
@@ -64,7 +63,7 @@ export const ɵscreenViewEvent = (
   [FIREBASE_PREVIOUS_SCREEN_NAME_KEY]: string,
   [FIREBASE_PREVIOUS_SCREEN_INSTANCE_ID_KEY]: number,
 }> => {
-  const activationEndEvents = router.events.pipe(filter<ActivationEnd>(e => e instanceof ActivationEnd));
+  const activationEndEvents = router.events.pipe(filter((e): e is ActivationEnd => e instanceof ActivationEnd));
   return activationEndEvents.pipe(
     switchMap<ActivationEnd, Observable<Record<string, any>|null>>(activationEnd => {
       // router parseUrl is having trouble with outlets when they're empty
@@ -83,7 +82,7 @@ export const ɵscreenViewEvent = (
       }
       const screenName = actualDeep.pathFromRoot.map(s => s.routeConfig?.path).filter(it => it).join('/') || '/';
 
-      const params = {
+      const params: Record<string, any> = {
         [SCREEN_NAME_KEY]: screenName,
         [PAGE_PATH_KEY]: `/${pagePath}`,
         [FIREBASE_EVENT_ORIGIN_KEY]: EVENT_ORIGIN_AUTO,
@@ -94,36 +93,29 @@ export const ɵscreenViewEvent = (
         params[PAGE_TITLE_KEY] = title.getTitle();
       }
 
-      let component = actualSnapshot.component;
-      if (component) {
-        if (component === ɵEmptyOutletComponent) {
-          let deepSnapshot = activationEnd.snapshot;
-          // TODO when might there be mutple children, different outlets? explore
-          while (deepSnapshot.firstChild) {
-            deepSnapshot = deepSnapshot.firstChild;
-          }
-          component = deepSnapshot.component;
-        }
-      } else {
-        component = activationEnd.snapshot.component;
-      }
+      const component = actualDeep.component || activationEnd.snapshot.component;
 
       if (typeof component === 'string') {
         return of({ ...params, [SCREEN_CLASS_KEY]: component });
       } else if (component) {
-        const componentFactory = componentFactoryResolver.resolveComponentFactory(component);
-        return of({ ...params, [SCREEN_CLASS_KEY]: componentFactory.selector });
+        const selector = reflectComponentType(component as any)?.selector;
+        if (selector) {
+          return of({ ...params, [SCREEN_CLASS_KEY]: selector });
+        }
       }
-      // lazy loads cause extra activations, ignore
+      // lazy loads or unresolved components cause extra activations, ignore
       return of(null);
     }),
+    map(params => {
+      if (!params) { return null; }
+      return {
+        [FIREBASE_SCREEN_CLASS_KEY]: params[SCREEN_CLASS_KEY],
+        [FIREBASE_SCREEN_INSTANCE_ID_KEY]: getScreenInstanceID(params),
+        ...params
+      };
+    }),
     filter(it => !!it),
-    map(params => ({
-      [FIREBASE_SCREEN_CLASS_KEY]: params[SCREEN_CLASS_KEY],
-      [FIREBASE_SCREEN_INSTANCE_ID_KEY]: getScreenInstanceID(params),
-      ...params
-    })),
-    groupBy(it => it[OUTLET_KEY]),
+    groupBy(it => (it as any)[OUTLET_KEY]),
     mergeMap(it => it.pipe(
       distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
       startWith<any, any>(undefined),
@@ -148,7 +140,6 @@ export class ScreenTrackingService implements OnDestroy {
   constructor(
     @Optional() router: Router,
     @Optional() title: Title,
-    componentFactoryResolver: ComponentFactoryResolver,
     zone: NgZone,
     @Optional() userTrackingService: UserTrackingService,
     injector: Injector,
@@ -161,7 +152,7 @@ export class ScreenTrackingService implements OnDestroy {
       const analytics = injector.get(Analytics);
       if (!router || !analytics) { return; }
       zone.runOutsideAngular(() => {
-        this.disposable = ɵscreenViewEvent(router, title, componentFactoryResolver).pipe(
+        this.disposable = ɵscreenViewEvent(router, title).pipe(
           switchMap(async params => {
             if (userTrackingService) { await userTrackingService.initialized; }
             return logEvent(analytics, SCREEN_VIEW_EVENT, params);

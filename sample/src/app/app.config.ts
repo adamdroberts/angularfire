@@ -1,17 +1,18 @@
-import { ApplicationConfig, inject, provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, inject, provideZonelessChangeDetection } from '@angular/core';
+import { initializeApp, provideFirebaseApp, FirebaseApp } from '@angular/fire/app';
 import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
-import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
+import { provideClientHydration } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { FirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideExperimentalZonelessChangeDetection(),
+    provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideClientHydration(withIncrementalHydration()),
+    provideClientHydration(),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => {
       const auth = getAuth(inject(FirebaseApp));
       if ((auth as any)._canInitEmulator && environment.emulatorPorts?.auth) {

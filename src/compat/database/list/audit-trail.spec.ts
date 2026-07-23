@@ -10,9 +10,9 @@ import { rando } from '../../../../src/utils';
 describe('auditTrail', () => {
   let db: AngularFireDatabase;
   let createRef: (path: string) => firebase.database.Reference;
-  let batch = {};
-  const items = [{ name: 'zero' }, { name: 'one' }, { name: 'two' }].map((item, i) => ({ key: i.toString(), ...item }));
-  Object.keys(items).forEach((key, i) => {
+  let batch: any = {};
+  const items: any = [{ name: 'zero' }, { name: 'one' }, { name: 'two' }].map((item, i) => ({ key: i.toString(), ...item }));
+  Object.keys(items).forEach((key: any, i: any) => {
     batch[i] = items[key];
   });
   // make batch immutable to preserve integrity

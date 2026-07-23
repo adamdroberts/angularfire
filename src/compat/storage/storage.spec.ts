@@ -13,7 +13,7 @@ if (typeof XMLHttpRequest === 'undefined') {
   globalThis.XMLHttpRequest = require('xhr2');
 }
 
-const blobOrBuffer = (data: string, options: unknown) => {
+const blobOrBuffer = (data: string, options: any) => {
   if (typeof Blob === 'undefined') {
     return Buffer.from(data, 'utf8');
   } else {
@@ -59,7 +59,7 @@ describe('AngularFireStorage', () => {
       const ref = TestBed.runInInjectionContext(() => afStorage.ref(rando()));
       const task = TestBed.runInInjectionContext(() => ref.put(blob));
       let emissionCount = 0;
-      let lastSnap: firebase.storage.UploadTaskSnapshot;
+      let lastSnap: firebase.storage.UploadTaskSnapshot | undefined;
       TestBed.runInInjectionContext(() => task.snapshotChanges())
         .subscribe(
           snap => {
@@ -69,7 +69,7 @@ describe('AngularFireStorage', () => {
           },
           done.fail,
           () => {
-            expect(lastSnap.state).toBe('success');
+            expect(lastSnap?.state).toBe('success');
             expect(emissionCount).toBeGreaterThan(0);
             ref.delete().subscribe(done, done.fail);
           });
@@ -110,7 +110,7 @@ describe('AngularFireStorage', () => {
       const ref = TestBed.runInInjectionContext(() => afStorage.ref(rando()));
       const task: AngularFireUploadTask = TestBed.runInInjectionContext(() => ref.put(blob));
       let emissionCount = 0;
-      let lastSnap: firebase.storage.UploadTaskSnapshot;
+      let lastSnap: firebase.storage.UploadTaskSnapshot | undefined;
       TestBed.runInInjectionContext(() => task.snapshotChanges()).subscribe(snap => {
         emissionCount++;
         lastSnap = snap;
@@ -122,7 +122,7 @@ describe('AngularFireStorage', () => {
         // https://github.com/firebase/firebase-js-sdk/issues/4158
         // expect(lastSnap.state).toEqual('canceled');
         expect(emissionCount).toEqual(1);
-        expect(lastSnap.state).toEqual('running');
+        expect(lastSnap?.state).toEqual('running');
         done();
       }, done.fail);
     });
@@ -135,7 +135,7 @@ describe('AngularFireStorage', () => {
       let paused = false;
       task.pause();
       TestBed.runInInjectionContext(() => task.snapshotChanges()).subscribe(snap => {
-        if (snap.state === 'paused') {
+        if (snap?.state === 'paused') {
           paused = true;
           task.resume();
         }

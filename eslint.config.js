@@ -26,7 +26,6 @@ module.exports = [
       ...js.configs.recommended.rules,
       ...ts.configs['recommended-requiring-type-checking'].rules,
       ...ts.configs['stylistic-type-checked'].rules,
-      ...ng.configs.recommended.rules,
       ...esImport.configs.errors.rules,
       // eslint/js rules
       'no-undef': 'off',

@@ -27,7 +27,7 @@ export function dataConnectInstanceFactory(fn: (injector: Injector) => DataConne
 const DATA_CONNECT_INSTANCES_PROVIDER = {
   provide: DataConnectInstances,
   deps: [
-    [new Optional(), PROVIDED_DATA_CONNECT_INSTANCES ],
+    [Optional, PROVIDED_DATA_CONNECT_INSTANCES ],
   ]
 };
 
@@ -35,7 +35,7 @@ const DEFAULT_DATA_CONNECT_INSTANCE_PROVIDER = {
   provide: DataConnect,
   useFactory: defaultDataConnectInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_DATA_CONNECT_INSTANCES ],
+    [Optional, PROVIDED_DATA_CONNECT_INSTANCES ],
     FirebaseApp,
   ]
 };

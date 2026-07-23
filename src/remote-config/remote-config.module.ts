@@ -38,7 +38,7 @@ export function remoteConfigInstanceFactory(fn: (injector: Injector) => Firebase
 const REMOTE_CONFIG_INSTANCES_PROVIDER = {
   provide: RemoteConfigInstances,
   deps: [
-    [new Optional(), PROVIDED_REMOTE_CONFIG_INSTANCES ],
+    [Optional, PROVIDED_REMOTE_CONFIG_INSTANCES ],
   ]
 };
 
@@ -46,7 +46,7 @@ const DEFAULT_REMOTE_CONFIG_INSTANCE_PROVIDER = {
   provide: RemoteConfig,
   useFactory: defaultRemoteConfigInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_REMOTE_CONFIG_INSTANCES ],
+    [Optional, PROVIDED_REMOTE_CONFIG_INSTANCES ],
     FirebaseApp,
     PLATFORM_ID,
   ]

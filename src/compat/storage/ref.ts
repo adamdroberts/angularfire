@@ -27,16 +27,22 @@ export function createStorageRef(
   injector?: Injector
 ): AngularFireStorageReference {
   return {
-    getDownloadURL: () => of(undefined).pipe(
-      observeOn(injector.get(ɵAngularFireSchedulers).outsideAngular),
-      switchMap(() => ref.getDownloadURL()),
-      pendingUntilEvent(injector)
-    ),
-    getMetadata: () => of(undefined).pipe(
-      observeOn(injector.get(ɵAngularFireSchedulers).outsideAngular),
-      switchMap(() => ref.getMetadata()),
-      pendingUntilEvent(injector)
-    ),
+    getDownloadURL: () => {
+      const scheduler = injector?.get(ɵAngularFireSchedulers).outsideAngular;
+      const obs$ = scheduler ? of(undefined).pipe(observeOn(scheduler)) : of(undefined);
+      return obs$.pipe(
+        switchMap(() => ref.getDownloadURL()),
+        pendingUntilEvent(injector)
+      );
+    },
+    getMetadata: () => {
+      const scheduler = injector?.get(ɵAngularFireSchedulers).outsideAngular;
+      const obs$ = scheduler ? of(undefined).pipe(observeOn(scheduler)) : of(undefined);
+      return obs$.pipe(
+        switchMap(() => ref.getMetadata()),
+        pendingUntilEvent(injector)
+      );
+    },
     delete: () => from(ref.delete()),
     child: (path: string) => createStorageRef(ref.child(path), injector),
     updateMetadata: (meta: SettableMetadata) => from(ref.updateMetadata(meta)),

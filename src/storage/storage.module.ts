@@ -32,7 +32,7 @@ export function storageInstanceFactory(fn: (injector: Injector) => FirebaseStora
 const STORAGE_INSTANCES_PROVIDER = {
   provide: StorageInstances,
   deps: [
-    [new Optional(), PROVIDED_STORAGE_INSTANCES ],
+    [Optional, PROVIDED_STORAGE_INSTANCES ],
   ]
 };
 
@@ -40,7 +40,7 @@ const DEFAULT_STORAGE_INSTANCE_PROVIDER = {
   provide: Storage,
   useFactory: defaultStorageInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_STORAGE_INSTANCES ],
+    [Optional, PROVIDED_STORAGE_INSTANCES ],
     FirebaseApp,
   ]
 };
@@ -73,8 +73,8 @@ export function provideStorage(fn: (injector: Injector) => FirebaseStorage, ...d
         ɵAngularFireSchedulers,
         FirebaseApps,
         // Defensively load Auth first, if provided
-        [new Optional(), AuthInstances ],
-        [new Optional(), AppCheckInstances ],
+        [Optional, AuthInstances ],
+        [Optional, AppCheckInstances ],
         ...deps,
       ]
     }

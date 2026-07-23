@@ -32,7 +32,7 @@ export function functionsInstanceFactory(fn: (injector: Injector) => FirebaseFun
 const FUNCTIONS_INSTANCES_PROVIDER = {
   provide: FunctionsInstances,
   deps: [
-    [new Optional(), PROVIDED_FUNCTIONS_INSTANCES ],
+    [Optional, PROVIDED_FUNCTIONS_INSTANCES ],
   ]
 };
 
@@ -40,7 +40,7 @@ const DEFAULT_FUNCTIONS_INSTANCE_PROVIDER = {
   provide: Functions,
   useFactory: defaultFunctionsInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_FUNCTIONS_INSTANCES ],
+    [Optional, PROVIDED_FUNCTIONS_INSTANCES ],
     FirebaseApp,
   ]
 };
@@ -73,8 +73,8 @@ export function provideFunctions(fn: (injector: Injector) => FirebaseFunctions, 
         ɵAngularFireSchedulers,
         FirebaseApps,
         // Defensively load Auth first, if provided
-        [new Optional(), AuthInstances ],
-        [new Optional(), AppCheckInstances ],
+        [Optional, AuthInstances ],
+        [Optional, AppCheckInstances ],
         ...deps,
       ]
     }

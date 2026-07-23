@@ -27,7 +27,7 @@ export function safeReadJSON(path: string, tree: Tree) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return JSON.parse(tree.read(path)!.toString());
-  } catch (e) {
+  } catch (e: any) {
     throw new SchematicsException(`Error when parsing ${path}: ${e.message}`);
   }
 }

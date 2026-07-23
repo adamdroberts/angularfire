@@ -43,7 +43,7 @@ export class AngularFirestoreDocument<T = DocumentData> {
    * Create or overwrite a single document.
    */
   set(data: T, options?: SetOptions): Promise<void> {
-    return this.ref.set(data, options);
+    return options ? this.ref.set(data, options) : this.ref.set(data);
   }
 
   /**
@@ -66,8 +66,8 @@ export class AngularFirestoreDocument<T = DocumentData> {
    */
   collection<R = DocumentData>(path: string, queryFn?: QueryFn): AngularFirestoreCollection<R> {
     const collectionRef = this.ref.collection(path) as firebase.firestore.CollectionReference<R>;
-    const { ref, query } = associateQuery(collectionRef, queryFn);
-    return new AngularFirestoreCollection(ref, query, this.afs);
+    const { ref, query } = associateQuery(collectionRef as any, queryFn);
+    return new AngularFirestoreCollection<R>(ref as any, query as any, this.afs);
   }
 
   /**

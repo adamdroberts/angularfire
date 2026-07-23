@@ -95,7 +95,7 @@ describe('AngularFireAuth', () => {
       error: done,
       complete: done.fail
     });
-    mockAuthState.next(null);
+    mockAuthState.next(null as any);
   });
 
   it('should emit auth updates through idToken', (done: any) => {
@@ -117,7 +117,7 @@ describe('AngularFireAuth', () => {
       error: done,
       complete: done.fail
     });
-    mockAuthState.next(null);
+    mockAuthState.next(null as any);
   });
 
 });

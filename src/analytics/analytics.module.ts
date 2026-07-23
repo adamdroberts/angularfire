@@ -36,7 +36,7 @@ export function analyticsInstanceFactory(fn: (injector: Injector) => FirebaseAna
 const ANALYTICS_INSTANCES_PROVIDER = {
   provide: AnalyticsInstances,
   deps: [
-    [new Optional(), PROVIDED_ANALYTICS_INSTANCES ],
+    [Optional, PROVIDED_ANALYTICS_INSTANCES ],
   ]
 };
 
@@ -44,7 +44,7 @@ const DEFAULT_ANALYTICS_INSTANCE_PROVIDER = {
   provide: Analytics,
   useFactory: defaultAnalyticsInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_ANALYTICS_INSTANCES ],
+    [Optional, PROVIDED_ANALYTICS_INSTANCES ],
     FirebaseApp,
     PLATFORM_ID,
   ]

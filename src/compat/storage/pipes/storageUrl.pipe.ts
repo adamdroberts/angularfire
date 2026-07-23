@@ -12,8 +12,8 @@ import { AngularFireStorage } from '../storage';
 export class GetDownloadURLPipe implements PipeTransform, OnDestroy {
 
   private asyncPipe: AsyncPipe;
-  private path: string;
-  private downloadUrl$: Observable<any>;
+  private path!: string;
+  private downloadUrl$!: Observable<any>;
 
   constructor(
     private storage: AngularFireStorage,

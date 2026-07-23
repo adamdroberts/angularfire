@@ -4,7 +4,7 @@ import { fromRef } from '../observable/fromRef';
 import { validateEventsArray } from './utils';
 
 export function stateChanges<T>(query: DatabaseQuery, events?: ChildEvent[], scheduler?: SchedulerLike) {
-  events = validateEventsArray(events);
-  const childEvent$ = events.map(event => fromRef<T>(query, event, 'on', scheduler));
+  const validatedEvents = validateEventsArray(events);
+  const childEvent$ = validatedEvents.map(event => fromRef<T>(query, event, 'on', scheduler));
   return merge(...childEvent$);
 }

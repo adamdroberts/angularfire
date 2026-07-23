@@ -22,17 +22,19 @@ export class UserTrackingService implements OnDestroy {
   ) {
     firebase.registerVersion('angularfire', VERSION.full, 'compat-user-tracking');
     if (isPlatformBrowser(platformId)) {
-      let resolveInitialized;
+      let resolveInitialized: () => void;
       this.initialized = zone.runOutsideAngular(() => new Promise(resolve => resolveInitialized = resolve));
       this.disposables = [
           auth.authState.subscribe(user => {
-            analytics.setUserId(user?.uid);
+            if (user?.uid) {
+              analytics.setUserId(user.uid);
+            }
             resolveInitialized();
           }),
           auth.credential.subscribe(credential => {
             if (credential) {
-              const method = credential.user.isAnonymous ? 'anonymous' : credential.additionalUserInfo.providerId;
-              if (credential.additionalUserInfo.isNewUser) {
+              const method = credential.user?.isAnonymous ? 'anonymous' : credential.additionalUserInfo?.providerId;
+              if (credential.additionalUserInfo?.isNewUser) {
                 analytics.logEvent('sign_up', { method });
               }
               analytics.logEvent('login', { method });

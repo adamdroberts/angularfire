@@ -32,9 +32,9 @@ export function getRef(database: firebase.database.Database, pathRef: PathRefere
 export function checkOperationCases(item: FirebaseOperation, cases: FirebaseOperationCases): Promise<void> {
   if (isString(item)) {
     return cases.stringCase();
-  } else if (isFirebaseRef(item)) {
+  } else if (isFirebaseRef(item) && cases.firebaseCase) {
     return cases.firebaseCase();
-  } else if (isFirebaseDataSnapshot(item)) {
+  } else if (isFirebaseDataSnapshot(item) && cases.snapshotCase) {
     return cases.snapshotCase();
   }
   throw new Error(`Expects a string, snapshot, or reference. Got: ${typeof item}`);

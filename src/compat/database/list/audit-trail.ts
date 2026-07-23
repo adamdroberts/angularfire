@@ -1,6 +1,6 @@
 import { Observable, SchedulerLike } from 'rxjs';
 import { map, scan, skipWhile, withLatestFrom } from 'rxjs/operators';
-import { AngularFireAction, ChildEvent, DataSnapshot, DatabaseQuery, SnapshotAction } from '../interfaces';
+import { ChildEvent, DatabaseQuery, SnapshotAction } from '../interfaces';
 import { fromRef } from '../observable/fromRef';
 import { stateChanges } from './state-changes';
 
@@ -8,17 +8,12 @@ import { stateChanges } from './state-changes';
 export function auditTrail<T>(query: DatabaseQuery, events?: ChildEvent[], scheduler?: SchedulerLike): Observable<SnapshotAction<T>[]> {
   const auditTrail$ = stateChanges<T>(query, events)
     .pipe(
-      scan((current, action) => [...current, action], [])
+      scan((current: SnapshotAction<T>[], action: SnapshotAction<T>) => [...current, action], [] as SnapshotAction<T>[])
     );
   return waitForLoaded<T>(query, auditTrail$, scheduler);
 }
 
-interface LoadedMetadata {
-  data: AngularFireAction<DataSnapshot>;
-  lastKeyToLoad: any;
-}
-
-function loadedData<T>(query: DatabaseQuery, scheduler?: SchedulerLike): Observable<LoadedMetadata> {
+function loadedData<T>(query: DatabaseQuery, scheduler?: SchedulerLike): Observable<any> {
   // Create an observable of loaded values to retrieve the
   // known dataset. This will allow us to know what key to
   // emit the "whole" array at when listening for child events.

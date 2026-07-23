@@ -62,7 +62,7 @@ export class AngularFirestoreCollectionGroup<T = DocumentData> {
    * but it collects each event in an array over time.
    */
   auditTrail(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
-    return this.stateChanges(events).pipe(scan((current, action) => [...current, ...action], []));
+    return this.stateChanges(events).pipe(scan((current: DocumentChangeAction<T>[], action: DocumentChangeAction<T>[]) => [...current, ...action], [] as DocumentChangeAction<T>[]));
   }
 
   /**

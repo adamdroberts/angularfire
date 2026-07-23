@@ -38,7 +38,7 @@ describe('angularfire', () => {
     });
 
     it('should execute nested scheduled work inside the specified zone', done => {
-      const testScheduler = new TestScheduler(null);
+      const testScheduler = new TestScheduler((a, b) => expect(a).toEqual(b));
       testScheduler.run(helpers => {
         const outsideAngularScheduler = new ɵZoneScheduler(Zone.current, testScheduler);
 

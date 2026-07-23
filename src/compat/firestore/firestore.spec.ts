@@ -36,7 +36,7 @@ describe('AngularFirestore', () => {
   });
 
   it('should create an AngularFirestoreDocument from a string path', () => {
-    const doc = TestBed.runInInjectionContext(() => afs.doc(afs.doc('a/doc').ref));
+    const doc = TestBed.runInInjectionContext(() => afs.doc(afs.doc('a/doc').ref as any));
     expect(doc instanceof AngularFirestoreDocument).toBe(true);
   });
 
@@ -46,7 +46,7 @@ describe('AngularFirestore', () => {
   });
 
   it('should create an AngularFirestoreCollection from a reference', () => {
-    const collection = TestBed.runInInjectionContext(() => afs.collection(afs.collection('stuffs').ref));
+    const collection = TestBed.runInInjectionContext(() => afs.collection(afs.collection('stuffs').ref as any));
     expect(collection instanceof AngularFirestoreCollection).toBe(true);
   });
 

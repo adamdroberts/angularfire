@@ -74,7 +74,7 @@ describe('createFirestoreStarterFiles', () => {
     createFirestoreStarterFiles(tree, context, [FEATURES.Firestore]);
     const match = /timestamp\.date\((\d+), (\d+), (\d+)\)/.exec(tree.readText('/firestore.rules'));
     expect(match).not.toBeNull();
-    const [, year, month, day] = match.map(Number);
+    const [, year, month, day] = (match as any).map(Number);
     const expiry = new Date(year, month - 1, day);
     const daysOut = (expiry.getTime() - Date.now()) / (1000 * 60 * 60 * 24);
     expect(daysOut).toBeGreaterThan(28);

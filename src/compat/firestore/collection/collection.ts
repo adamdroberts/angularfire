@@ -73,7 +73,7 @@ export class AngularFirestoreCollection<T = DocumentData> {
     return source.pipe(
       // We want to filter out empty arrays, but always emit at first, so the developer knows
       // that the collection has been resolve; even if it's empty
-      startWith<DocumentChangeAction<T>[], undefined>(undefined),
+      startWith(undefined as any),
       pairwise(),
       filter(([prior, current]: DocumentChangeTuple<T>) => current.length > 0 || !prior),
       map(([, current]) => current),
@@ -86,7 +86,7 @@ export class AngularFirestoreCollection<T = DocumentData> {
    * but it collects each event in an array over time.
    */
   auditTrail(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
-    return this.stateChanges(events).pipe(scan((current, action) => [...current, ...action], []));
+    return this.stateChanges(events).pipe(scan((current: DocumentChangeAction<T>[], action: DocumentChangeAction<T>[]) => [...current, ...action], [] as DocumentChangeAction<T>[]));
   }
 
   /**

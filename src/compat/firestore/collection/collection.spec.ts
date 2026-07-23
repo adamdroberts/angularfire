@@ -168,7 +168,7 @@ describe('AngularFirestoreCollection', () => {
           if (count === 2) {
             expect(data.length).toEqual(ITEMS);
             const change = data.find(x => x.payload.doc.id === firstName);
-            expect(change.type).toEqual('modified');
+            expect(change?.type).toEqual('modified');
             sub.unsubscribe();
             done();
           }
@@ -219,7 +219,7 @@ describe('AngularFirestoreCollection', () => {
           // the first time should all be 'added'
           if (count === 1) {
             // make an update
-            firstIndex = data.find(d => d.payload.doc.id === names[0]).payload.newIndex;
+            firstIndex = (data.find(d => d.payload.doc.id === names[0]) as any).payload.newIndex;
             stocks.doc(names[0]).update({ price: 2 });
           }
           // on the second round, make sure the array is still the same
@@ -227,8 +227,8 @@ describe('AngularFirestoreCollection', () => {
           if (count === 2) {
             expect(data.length).toEqual(ITEMS);
             const change = data.find(x => x.payload.doc.id === names[0]);
-            expect(change.type).toEqual('modified');
-            expect(change.payload.oldIndex).toEqual(firstIndex);
+            expect(change?.type).toEqual('modified');
+            expect(change?.payload.oldIndex).toEqual(firstIndex);
             sub.unsubscribe();
             done();
           }
@@ -246,8 +246,8 @@ describe('AngularFirestoreCollection', () => {
           sub.unsubscribe();
           const change = data.find(x => x.payload.doc.id === names[0]);
           expect(data.length).toEqual(1);
-          expect(change.payload.doc.data().price).toEqual(2);
-          expect(change.type).toEqual('modified');
+          expect(change?.payload.doc.data().price).toEqual(2);
+          expect(change?.type).toEqual('modified');
           done();
         });
 
@@ -266,8 +266,8 @@ describe('AngularFirestoreCollection', () => {
           sub.unsubscribe();
           const change = data.find(x => x.payload.doc.id === nextId);
           expect(data.length).toEqual(ITEMS + 1);
-          expect(change.payload.doc.data().price).toEqual(2);
-          expect(change.type).toEqual('added');
+          expect(change?.payload.doc.data().price).toEqual(2);
+          expect(change?.type).toEqual('added');
           done();
         });
 

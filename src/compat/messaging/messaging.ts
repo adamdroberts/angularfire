@@ -64,9 +64,8 @@ export class AngularFireMessaging {
       observeOn(schedulers.insideAngular),
       switchMap(async messaging => {
         if (Notification.permission === 'granted') {
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          const serviceWorkerRegistration = serviceWorker ? await serviceWorker : null;
-          return await messaging.getToken({ vapidKey, serviceWorkerRegistration });
+          const serviceWorkerRegistration = serviceWorker ? await serviceWorker : undefined;
+          return await messaging.getToken({ vapidKey: vapidKey ?? undefined, serviceWorkerRegistration: serviceWorkerRegistration ?? undefined });
         } else {
           return null;
         }

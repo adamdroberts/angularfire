@@ -1,7 +1,7 @@
 import { isDevMode } from '@angular/core';
 
 export function ɵcacheInstance<T>(cacheKey: any, moduleName: string, appName: string, fn: () => T, deps: any): T {
-  const [, instance, cachedDeps] = globalThis.ɵAngularfireInstanceCache.find((it: any) => it[0] === cacheKey) || [];
+  const [, instance, cachedDeps] = ((globalThis as any).ɵAngularfireInstanceCache || []).find((it: any) => it[0] === cacheKey) || [];
   if (instance) {
     if (!matchDep(deps, cachedDeps)) {
       log('error', `${moduleName} was already initialized on the ${appName} Firebase App with different settings.${IS_HMR ? ' You may need to reload as Firebase is not HMR aware.' : ''}`);
@@ -10,7 +10,7 @@ export function ɵcacheInstance<T>(cacheKey: any, moduleName: string, appName: s
     return instance;
   } else {
     const newInstance = fn();
-    globalThis.ɵAngularfireInstanceCache.push([cacheKey, newInstance, deps]);
+    (globalThis as any).ɵAngularfireInstanceCache.push([cacheKey, newInstance, deps]);
     return newInstance;
   }
 }
@@ -32,4 +32,4 @@ const log = (level: 'log'|'error'|'info'|'warn', ...args: any) => {
   }
 };
 
-globalThis.ɵAngularfireInstanceCache ||= [];
+(globalThis as any).ɵAngularfireInstanceCache ||= [];

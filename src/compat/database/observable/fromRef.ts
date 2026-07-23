@@ -21,14 +21,14 @@ export function fromRef<T>(ref: DatabaseQuery,
 ): Observable<AngularFireAction<DatabaseSnapshot<T>>> {
   return new Observable<SnapshotPrevKey<T>>(subscriber => {
     let fn: any = null;
-    fn = ref[listenType](event, (snapshot, prevKey) => {
+    fn = (ref as any)[listenType](event, (snapshot: any, prevKey: any) => {
       scheduler.schedule(() => {
         subscriber.next({ snapshot, prevKey });
       });
       if (listenType === 'once') {
         scheduler.schedule(() => subscriber.complete());
       }
-    }, err => {
+    }, (err: any) => {
       scheduler.schedule(() => subscriber.error(err));
     });
 

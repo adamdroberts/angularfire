@@ -54,7 +54,7 @@ export const USE_EMULATOR = new InjectionToken<UseEmulatorArguments>('angularfir
  *  return ref.where('age', '<', 200);
  * });
  */
-export function associateQuery<T>(collectionRef: CollectionReference<T>, queryFn = ref => ref): AssociatedReference<T> {
+export function associateQuery<T>(collectionRef: CollectionReference<T>, queryFn = (ref: CollectionReference<T>) => ref as Query<T>): AssociatedReference<T> {
   const query = queryFn(collectionRef);
   const ref = collectionRef;
   return { query, ref };
@@ -197,7 +197,7 @@ export class AngularFirestore {
     } else {
       collectionRef = pathOrRef;
     }
-    const { ref, query } = associateQuery<T>(collectionRef, queryFn);
+    const { ref, query } = associateQuery<T>(collectionRef, queryFn as any);
     const refInZone = this.ngZone.run(() => ref);
     return new AngularFirestoreCollection<T>(refInZone, query, this);
   }

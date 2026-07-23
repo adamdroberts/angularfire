@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ng19-test": {
+    "angularfire-sample": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/ng19-test",
+            "outputPath": "dist/angularfire-sample",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [],
@@ -29,7 +29,6 @@
             ],
             "scripts": [],
             "server": "src/main.server.ts",
-            "outputMode": "server",
             "ssr": {
               "entry": "src/server.ts"
             },
@@ -63,10 +62,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "ng19-test:build:production"
+              "buildTarget": "angularfire-sample:build:production"
             },
             "development": {
-              "buildTarget": "ng19-test:build:development"
+              "buildTarget": "angularfire-sample:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -93,5 +92,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

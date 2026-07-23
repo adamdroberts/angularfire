@@ -8,6 +8,6 @@ export function snapshotChanges<T>(
   events?: ChildEvent[],
   scheduler?: SchedulerLike
 ): Observable<SnapshotAction<T>[]> {
-  events = validateEventsArray(events);
-  return listChanges<T>(query, events, scheduler);
+  const validatedEvents = validateEventsArray(events);
+  return listChanges<T>(query, validatedEvents, scheduler);
 }

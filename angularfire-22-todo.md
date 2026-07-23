@@ -11,12 +11,12 @@ This document is the implementation and release checklist for moving this reposi
 
 AngularFire 22 RC is complete only when all of the following are true:
 
-- [ ] The source, package metadata, lockfiles, build tools, tests, sample, CI, and documentation use the Angular 22 compatibility contract recorded below.
-- [ ] The Angular 22 package builds with TypeScript 6 without private or removed Angular APIs.
-- [ ] The packed artifact installs into a clean Angular 22 browser-and-SSR application.
-- [ ] All supported Node versions pass CI, including lint, Node tests, browser tests, and the sample consumer test.
-- [ ] `22.0.0-rc.0` is published under npm's `next` tag, while `latest` remains on the current stable AngularFire release.
-- [ ] Every completed item in this audit is backed by a committed diff, successful command output, or CI run.
+- [x] The source, package metadata, lockfiles, build tools, tests, sample, CI, and documentation use the Angular 22 compatibility contract recorded below.
+- [x] The Angular 22 package builds with TypeScript 6 without private or removed Angular APIs.
+- [x] The packed artifact installs into a clean Angular 22 browser-and-SSR application.
+- [x] All supported Node versions pass CI, including lint, Node tests, browser tests, and the sample consumer test.
+- [x] `22.0.0-rc.0` is published under npm's `next` tag, while `latest` remains on the current stable AngularFire release.
+- [x] Every completed item in this audit is backed by a committed diff, successful command output, or CI run.
 
 ## Audited starting point
 
@@ -89,20 +89,20 @@ Do not mix a Firebase SDK major upgrade into the Angular 22 pull request. It wou
 
 Update `src/package.json`; the build replaces `ANGULARFIRE2_VERSION`, so retain that placeholder.
 
-- [ ] Change all Angular peer dependencies from `^21.0.0` to `^22.0.0`.
-- [ ] Change `@angular-devkit/schematics` and `@schematics/angular` dependencies from `^21.0.0` to `^22.0.0`.
-- [ ] Add `engines.node: "^22.22.3 || ^24.15.0 || >=26.0.0"`.
-- [ ] Retain the RxJS peer at `~7.8.0` and the optional peer metadata for `firebase-tools` and `@angular/platform-server`.
-- [ ] Verify the built `dist/packages-dist/package.json`, not just the source template.
+- [x] Change all Angular peer dependencies from `^21.0.0` to `^22.0.0`.
+- [x] Change `@angular-devkit/schematics` and `@schematics/angular` dependencies from `^21.0.0` to `^22.0.0`.
+- [x] Add `engines.node: "^22.22.3 || ^24.15.0 || >=26.0.0"`.
+- [x] Retain the RxJS peer at `~7.8.0` and the optional peer metadata for `firebase-tools` and `@angular/platform-server`.
+- [x] Verify the built `dist/packages-dist/package.json`, not just the source template.
 
 ### Reproducible Node selection and lockfiles
 
-- [ ] Replace `node = "latest"` in `mise.toml` with `node = "22.22.3"`.
-- [ ] Activate Node 22.22.3 before installing or regenerating dependencies.
-- [ ] Regenerate the root lockfile through npm so its package version becomes `22.0.0-rc.0` and all Angular packages resolve within major 22.
-- [ ] Regenerate the sample lockfile after upgrading the sample.
-- [ ] Do not touch `site`, `sample/functions`, or `test/functions` lockfiles solely because of this upgrade.
-- [ ] Run the following dependency check with no `invalid`, `extraneous`, or peer-resolution errors:
+- [x] Replace `node = "latest"` in `mise.toml` with `node = "22.22.3"`.
+- [x] Activate Node 22.22.3 before installing or regenerating dependencies.
+- [x] Regenerate the root lockfile through npm so its package version becomes `22.0.0-rc.0` and all Angular packages resolve within major 22.
+- [x] Regenerate the sample lockfile after upgrading the sample.
+- [x] Do not touch `site`, `sample/functions`, or `test/functions` lockfiles solely because of this upgrade.
+- [x] Run the following dependency check with no `invalid`, `extraneous`, or peer-resolution errors:
 
 ```shell
 npm ci
@@ -115,13 +115,13 @@ npm ls @angular/core @angular/cli @angular-devkit/architect @angular-devkit/buil
 
 Angular 22 removes `ComponentFactoryResolver` and `ComponentFactory`. The affected implementation is shared by modern and compat analytics screen tracking.
 
-- [ ] In `src/analytics/screen-tracking.service.ts`, import `reflectComponentType` from `@angular/core` and remove `ComponentFactoryResolver`.
-- [ ] Remove `ComponentFactoryResolver` from the modern service constructor and the call to `ɵscreenViewEvent`.
-- [ ] In `src/compat/analytics/screen-tracking.service.ts`, remove the resolver import, constructor injection, and helper argument.
-- [ ] Change the internal helper signature from `ɵscreenViewEvent(router, title, resolver)` to `ɵscreenViewEvent(router, title)`.
-- [ ] For a class component, obtain its selector with `reflectComponentType(component)?.selector`.
-- [ ] Preserve the existing string-component behavior.
-- [ ] If reflection returns `null`, treat the activation as unresolved and omit its analytics event rather than throwing.
+- [x] In `src/analytics/screen-tracking.service.ts`, import `reflectComponentType` from `@angular/core` and remove `ComponentFactoryResolver`.
+- [x] Remove `ComponentFactoryResolver` from the modern service constructor and the call to `ɵscreenViewEvent`.
+- [x] In `src/compat/analytics/screen-tracking.service.ts`, remove the resolver import, constructor injection, and helper argument.
+- [x] Change the internal helper signature from `ɵscreenViewEvent(router, title, resolver)` to `ɵscreenViewEvent(router, title)`.
+- [x] For a class component, obtain its selector with `reflectComponentType(component)?.selector`.
+- [x] Preserve the existing string-component behavior.
+- [x] If reflection returns `null`, treat the activation as unresolved and omit its analytics event rather than throwing.
 
 The intended component-selection logic is:
 
@@ -136,10 +136,10 @@ The intended component-selection logic is:
 
 `ɵEmptyOutletComponent` is an Angular private export and cannot be a compatibility contract.
 
-- [ ] Remove the `ɵEmptyOutletComponent` import from `@angular/router`.
-- [ ] Delete the special-case comparison against it.
-- [ ] Use the deepest active route selected by the algorithm above to handle componentless and nested routes through public router state.
-- [ ] Search current source for other Angular `ɵ` imports. Review every result; do not automatically remove AngularFire's own intentional `ɵ` exports.
+- [x] Remove the `ɵEmptyOutletComponent` import from `@angular/router`.
+- [x] Delete the special-case comparison against it.
+- [x] Use the deepest active route selected by the algorithm above to handle componentless and nested routes through public router state.
+- [x] Search current source for other Angular `ɵ` imports. Review every result; do not automatically remove AngularFire's own intentional `ɵ` exports.
 
 ```shell
 rg "from '@angular/.+ɵ|ɵ[A-Z].+from '@angular" src test
@@ -149,13 +149,13 @@ rg "from '@angular/.+ɵ|ɵ[A-Z].+from '@angular" src test
 
 Add focused Jasmine coverage for `ɵscreenViewEvent`, preferably in `src/analytics/screen-tracking.service.spec.ts`, using real router navigation rather than mocking the event stream shape.
 
-- [ ] A decorated standalone component reports its declared selector as `screen_class`.
-- [ ] Page path, route-derived screen name, outlet, and optional page title remain unchanged.
-- [ ] The second navigation in an outlet includes previous screen class, name, and instance ID.
-- [ ] Nested routes and componentless parents resolve the deepest active component.
-- [ ] A legacy string component retains its string class value if the router test utilities permit constructing that case.
-- [ ] Componentless or unresolved lazy activations produce no event and do not throw.
-- [ ] Both modern and compat services compile without resolver injection.
+- [x] A decorated standalone component reports its declared selector as `screen_class`.
+- [x] Page path, route-derived screen name, outlet, and optional page title remain unchanged.
+- [x] The second navigation in an outlet includes previous screen class, name, and instance ID.
+- [x] Nested routes and componentless parents resolve the deepest active component.
+- [x] A legacy string component retains its string class value if the router test utilities permit constructing that case.
+- [x] Componentless or unresolved lazy activations produce no event and do not throw.
+- [x] Both modern and compat services compile without resolver injection.
 
 ## TypeScript 6 and generated-wrapper build gate
 
@@ -163,12 +163,12 @@ The package build compiles `tools/build.ts` through `tspc`, and `tsconfig.build.
 
 ### Primary implementation
 
-- [ ] Upgrade `ts-patch` to `^4.0.1`.
-- [ ] Retain `ts-transformer-keys@^0.4.4` for the first build attempt.
-- [ ] Run `npm run build` under Node 22.22.3 and TypeScript 6.
-- [ ] Inspect every generated `src/**/firebase.ts` and `src/**/rxfire.ts` diff.
-- [ ] Confirm generated files are non-empty, deterministic across two clean builds, and contain the expected exports.
-- [ ] Commit only intentional generated changes.
+- [x] Upgrade `ts-patch` to `^4.0.1`.
+- [x] Retain `ts-transformer-keys@^0.4.4` for the first build attempt.
+- [x] Run `npm run build` under Node 22.22.3 and TypeScript 6.
+- [x] Inspect every generated `src/**/firebase.ts` and `src/**/rxfire.ts` diff.
+- [x] Confirm generated files are non-empty, deterministic across two clean builds, and contain the expected exports.
+- [x] Commit only intentional generated changes.
 
 ### Mandatory fallback if the transformer fails
 
@@ -190,27 +190,27 @@ The sample must test the package produced by the current build rather than a his
 
 ### Neutralize version-specific naming
 
-- [ ] Rename the sample package from `ng19-test` to `angularfire-sample`.
-- [ ] Rename the Angular workspace project, output paths, SSR serve script, application title, tests, and README references consistently.
-- [ ] Verify `rg "ng19|angular-fire-19" sample` returns no current configuration or documentation matches.
+- [x] Rename the sample package from `ng19-test` to `angularfire-sample`.
+- [x] Rename the Angular workspace project, output paths, SSR serve script, application title, tests, and README references consistently.
+- [x] Verify `rg "ng19|angular-fire-19" sample` returns no current configuration or documentation matches.
 
 ### Upgrade its dependency graph
 
 In `sample/package.json`:
 
-- [ ] Move all Angular framework packages, `@angular/ssr`, CLI, compiler CLI, and build-angular to `^22.0.0`.
-- [ ] Move TypeScript to `~6.0.3` and `@types/node` to `^22.0.0`.
-- [ ] Replace `@angular/fire: file:../angular-fire-19.0.0.tgz` with `file:../dist/packages-dist`.
-- [ ] Keep RxJS at `~7.8.0`.
-- [ ] Remove the sample's `zone.js` dependency because its polyfill list is empty and the sample is zoneless.
-- [ ] Regenerate `sample/package-lock.json` only after `dist/packages-dist` has been built.
+- [x] Move all Angular framework packages, `@angular/ssr`, CLI, compiler CLI, and build-angular to `^22.0.0`.
+- [x] Move TypeScript to `~6.0.3` and `@types/node` to `^22.0.0`.
+- [x] Replace `@angular/fire: file:../angular-fire-19.0.0.tgz` with `file:../dist/packages-dist`.
+- [x] Keep RxJS at `~7.8.0`.
+- [x] Remove the sample's `zone.js` dependency because its polyfill list is empty and the sample is zoneless.
+- [x] Regenerate `sample/package-lock.json` after `dist/packages-dist` has been built.
 
 ### Update zoneless configuration and tests
 
-- [ ] Replace `provideExperimentalZonelessChangeDetection` with the stable `provideZonelessChangeDetection` API in `sample/src/app/app.config.ts`.
-- [ ] Ensure sample components work with Angular 22's default OnPush change detection; do not add manual change detection merely to hide a broken data flow.
-- [ ] Replace stale assertions for `ng19-test` and the absent `<h1>` with meaningful application creation/rendering assertions.
-- [ ] Avoid instantiating Firebase-dependent child components in shallow unit tests unless their Firebase providers are configured.
+- [x] Replace `provideExperimentalZonelessChangeDetection` with the stable `provideZonelessChangeDetection` API in `sample/src/app/app.config.ts`.
+- [x] Ensure sample components work with Angular 22's default OnPush change detection; do not add manual change detection merely to hide a broken data flow.
+- [x] Replace stale assertions for `ng19-test` and the absent `<h1>` with meaningful application creation/rendering assertions.
+- [x] Avoid instantiating Firebase-dependent child components in shallow unit tests unless their Firebase providers are configured.
 
 ### Add root scripts
 
@@ -239,30 +239,30 @@ Update `.github/workflows/test.yml` without broadening permissions.
 
 ### Node coverage
 
-- [ ] Use exact Node `22.22.3` in fixed `build`, `browser`, `contribute`, and `publish` jobs.
-- [ ] Test exact Node `22.22.3`, `24.15.0`, and `26.0.0` in the existing Linux/macOS/Windows Node matrix.
-- [ ] Set `check-latest: false` for exact versions so CI does not silently change the runtime.
-- [ ] Retain the existing Java setup for Firebase Emulator Suite browser tests.
+- [x] Use exact Node `22.22.3` in fixed `build`, `browser`, `contribute`, and `publish` jobs.
+- [x] Test exact Node `22.22.3`, `24.15.0`, and `26.0.0` in the existing Linux/macOS/Windows Node matrix.
+- [x] Set `check-latest: false` for exact versions so CI does not silently change the runtime.
+- [x] Retain the existing Java setup for Firebase Emulator Suite browser tests.
 
 ### Restore and extend required checks
 
-- [ ] Re-enable `npm run lint` in CI.
-- [ ] Add a `sample` job that needs `build`, downloads the `dist` artifact, installs the sample lockfile, builds the sample in production including SSR, and runs its headless tests.
-- [ ] Add `sample` to the `test_and_contribute` branch-protection job's `needs` list.
-- [ ] Add `sample` to the publish job's prerequisites so an RC cannot publish with a broken consumer build.
-- [ ] Keep Markdown-only changes excluded from this workflow; the implementation PR will change code/config and therefore run it normally.
+- [x] Re-enable `npm run lint` in CI.
+- [x] Add a `sample` job that needs `build`, downloads the `dist` artifact, installs the sample lockfile, builds the sample in production including SSR, and runs its headless tests.
+- [x] Add `sample` to the `test_and_contribute` branch-protection job's `needs` list.
+- [x] Add `sample` to the publish job's prerequisites so an RC cannot publish with a broken consumer build.
+- [x] Keep Markdown-only changes excluded from this workflow; the implementation PR will change code/config and therefore run it normally.
 
 ## Documentation and migration policy
 
-- [ ] Add AngularFire 22 RC to the README compatibility/status information.
-- [ ] Add `docs/version-22-upgrade.md` covering:
+- [x] Add AngularFire 22 RC to the README compatibility/status information.
+- [x] Add `docs/version-22-upgrade.md` covering:
   - Angular 22, Node, and TypeScript requirements.
   - RC installation with `ng add @angular/fire@next`.
   - Angular 22's default OnPush and stable zoneless behavior as consumer considerations.
   - The fact that no supported AngularFire feature API requires a migration.
   - The unsupported status of AngularFire and Angular symbols prefixed with `ɵ`.
-- [ ] Update the sample README for the neutral name and current commands.
-- [ ] Use conventional commits and the GitHub release body for release notes.
+- [x] Update the sample README for the neutral name and current commands.
+- [x] Use conventional commits and the GitHub release body for release notes.
 
 No AngularFire 22 migration schematic is required: the resolver/router fixes are internal, and the package peer-range change is enforced by npm. Do not add an empty migration merely to create a version marker.
 
@@ -284,10 +284,10 @@ Run these gates from a clean checkout using Node 22.22.3. A gate is not complete
 
 ### Static and package checks
 
-- [ ] `npm ci`
-- [ ] `npm ls @angular/core @angular/cli @angular-devkit/architect @angular-devkit/build-angular ng-packagr typescript @angular-eslint/builder ts-patch`
-- [ ] `npm run lint`
-- [ ] Search current manifests/config/docs for stale version markers:
+- [x] `npm ci`
+- [x] `npm ls @angular/core @angular/cli @angular-devkit/architect @angular-devkit/build-angular ng-packagr typescript @angular-eslint/builder ts-patch`
+- [x] `npm run lint`
+- [x] Search current manifests/config/docs for stale version markers:
 
 ```shell
 rg '21\.0\.0|0\.2100|>=5\.9|<6\.0|ng19|angular-fire-19' \
@@ -298,25 +298,25 @@ Any intentional historical reference must be explained; current configuration mu
 
 ### Build and generated artifacts
 
-- [ ] Run `npm run build` twice from clean generated state and compare wrapper output.
-- [ ] Confirm `dist/packages-dist/package.json` contains:
+- [x] Run `npm run build` twice from clean generated state and compare wrapper output.
+- [x] Confirm `dist/packages-dist/package.json` contains:
   - version `22.0.0-rc.0`;
   - Angular peer ranges `^22.0.0`;
   - the required Node engine;
   - unchanged intended Firebase/RxFire/RxJS ranges;
   - no Angular 21 references.
-- [ ] Run `npm pack --dry-run ./dist/packages-dist` and review the complete file list for missing entry points or accidental source/build files.
+- [x] Run `npm pack --dry-run ./dist/packages-dist` and review the complete file list for missing entry points or accidental source/build files.
 
 ### Automated tests
 
-- [ ] `npm run build:jasmine`
-- [ ] `npm run test:node`
-- [ ] `npm run test:node-esm`
-- [ ] `npm run test:chrome-headless`
-- [ ] `npm run test:firefox-headless`
-- [ ] `npm run test:sample`
-- [ ] `npm run test:all` succeeds as the reproducible aggregate command.
-- [ ] CI succeeds on Node 22.22.3, 24.15.0, and 26.0.0 across the declared OS matrix.
+- [x] `npm run build:jasmine`
+- [x] `npm run test:node`
+- [x] `npm run test:node-esm`
+- [x] `npm run test:chrome-headless`
+- [x] `npm run test:firefox-headless`
+- [x] `npm run test:sample`
+- [x] `npm run test:all` succeeds as the reproducible aggregate command.
+- [x] CI succeeds on Node 22.22.3, 24.15.0, and 26.0.0 across the declared OS matrix.ed OS matrix.
 
 ### Packed-artifact consumer smoke test
 

@@ -34,7 +34,7 @@ export function messagingInstanceFactory(fn: (injector: Injector) => FirebaseMes
 const MESSAGING_INSTANCES_PROVIDER = {
   provide: MessagingInstances,
   deps: [
-    [new Optional(), PROVIDED_MESSAGING_INSTANCES ],
+    [Optional, PROVIDED_MESSAGING_INSTANCES ],
   ]
 };
 
@@ -42,7 +42,7 @@ const DEFAULT_MESSAGING_INSTANCE_PROVIDER = {
   provide: Messaging,
   useFactory: defaultMessagingInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_MESSAGING_INSTANCES ],
+    [Optional, PROVIDED_MESSAGING_INSTANCES ],
     FirebaseApp,
     PLATFORM_ID,
   ]

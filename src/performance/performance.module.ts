@@ -40,7 +40,7 @@ export function performanceInstanceFactory(fn: (injector: Injector) => FirebaseP
 const PERFORMANCE_INSTANCES_PROVIDER = {
   provide: PerformanceInstances,
   deps: [
-    [new Optional(), PROVIDED_PERFORMANCE_INSTANCES ],
+    [Optional, PROVIDED_PERFORMANCE_INSTANCES ],
   ]
 };
 
@@ -48,7 +48,7 @@ const DEFAULT_PERFORMANCE_INSTANCE_PROVIDER = {
   provide: Performance,
   useFactory: defaultPerformanceInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_PERFORMANCE_INSTANCES ],
+    [Optional, PROVIDED_PERFORMANCE_INSTANCES ],
     FirebaseApp,
     PLATFORM_ID,
   ]

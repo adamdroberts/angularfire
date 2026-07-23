@@ -1,3 +1,4 @@
+// @ts-ignore
 import { spawn } from 'cross-spawn';
 import { copy, writeFile } from 'fs-extra';
 import { join, sep } from 'path';
@@ -283,7 +284,7 @@ async function writeVersionOverPlaceholder(root: { version: string }) {
     // Zero matches should reach the guard below, not replace-in-file's generic rejection.
     allowEmptyPaths: true,
   });
-  if (!replacements.some(replacement => replacement.hasChanged)) {
+  if (!replacements.some((replacement: any) => replacement.hasChanged)) {
     throw new Error('No ANGULARFIRE2_VERSION placeholder found in the compiled schematics — the version pin would ship disabled.');
   }
 }
@@ -303,7 +304,7 @@ async function replaceSchematicVersions() {
 }
 
 function spawnPromise(command: string, args: string[]) {
-  return new Promise<void>((resolve, reject) => spawn(command, args, { stdio: 'inherit' }).on('close', code => {
+  return new Promise<void>((resolve, reject) => spawn(command, args, { stdio: 'inherit' }).on('close', (code: number | null) => {
     if (code === 0) {
       resolve()
     } else {
@@ -339,7 +340,10 @@ async function compileSchematics() {
       "rxjs",
       "@schematics/angular",
       "jsonc-parser",
-      "firebase-tools"
+      "firebase-tools",
+      "inquirer",
+      "inquirer/*",
+      "inquirer-autocomplete-prompt"
     ],
     outdir: dest('schematics'),
   });

@@ -53,13 +53,13 @@ export type Primitive = number | string | boolean;
 export interface DatabaseSnapshotExists<T> extends firebase.database.DataSnapshot {
   exists(): true;
   val(): T;
-  forEach(action: (a: DatabaseSnapshot<T>) => boolean): boolean;
+  forEach(action: (a: any) => boolean | void): boolean;
 }
 
-export interface DatabaseSnapshotDoesNotExist<T> extends firebase.database.DataSnapshot {
+export interface DatabaseSnapshotDoesNotExist<_T> extends firebase.database.DataSnapshot {
   exists(): false;
   val(): null;
-  forEach(action: (a: DatabaseSnapshot<T>) => boolean): boolean;
+  forEach(action: (a: any) => boolean | void): boolean;
 }
 
 export type DatabaseSnapshot<T> = DatabaseSnapshotExists<T> | DatabaseSnapshotDoesNotExist<T>;

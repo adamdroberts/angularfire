@@ -10,13 +10,13 @@ export function listChanges<T = any>(ref: DatabaseQuery, events: ChildEvent[], s
     switchMap(snapshotAction => {
       const childEvent$ = [of(snapshotAction)];
       events.forEach(event => childEvent$.push(fromRef(ref, event, 'on', scheduler)));
-      return merge(...childEvent$).pipe(scan(buildView, []));
+      return merge(...childEvent$).pipe(scan(buildView, [] as any[]));
     }),
     distinctUntilChanged()
   );
 }
 
-function positionFor<T>(changes: SnapshotAction<T>[], key) {
+function positionFor<T>(changes: SnapshotAction<T>[], key: string | null) {
   const len = changes.length;
   for (let i = 0; i < len; i++) {
     if (changes[i].payload.key === key) {
@@ -30,7 +30,7 @@ function positionAfter<T>(changes: SnapshotAction<T>[], prevKey?: string) {
   if (isNil(prevKey)) {
     return 0;
   } else {
-    const i = positionFor(changes, prevKey);
+    const i = positionFor(changes, prevKey ?? null);
     if (i === -1) {
       return changes.length;
     } else {
@@ -39,15 +39,15 @@ function positionAfter<T>(changes: SnapshotAction<T>[], prevKey?: string) {
   }
 }
 
-function buildView(current, action) {
+function buildView(current: any[], action: any) {
   const { payload, prevKey, key } = action;
   const currentKeyPosition = positionFor(current, key);
   const afterPreviousKeyPosition = positionAfter(current, prevKey);
   switch (action.type) {
     case 'value':
       if (action.payload?.exists()) {
-        let prevKey = null;
-        action.payload.forEach(payload => {
+        let prevKey: string | null = null;
+        action.payload.forEach((payload: any) => {
           const action = { payload, type: 'value', prevKey, key: payload.key };
           prevKey = payload.key;
           current = [...current, action];
@@ -60,7 +60,7 @@ function buildView(current, action) {
         // check that the previouskey is what we expect, else reorder
         const previous = current[currentKeyPosition - 1];
         if ((previous?.key || null) !== prevKey) {
-          current = current.filter(x => x.payload.key !== payload.key);
+          current = current.filter((x: any) => x.payload.key !== payload.key);
           current.splice(afterPreviousKeyPosition, 0, action);
         }
       } else if (prevKey == null) {
@@ -71,9 +71,9 @@ function buildView(current, action) {
       }
       return current;
     case 'child_removed':
-      return current.filter(x => x.payload.key !== payload.key);
+      return current.filter((x: any) => x.payload.key !== payload.key);
     case 'child_changed':
-      return current.map(x => x.payload.key === key ? action : x);
+      return current.map((x: any) => x.payload.key === key ? action : x);
     case 'child_moved':
       if (currentKeyPosition > -1) {
         const data = current.splice(currentKeyPosition, 1)[0];

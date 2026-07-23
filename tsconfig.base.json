@@ -24,6 +24,7 @@
       "paths": {
         "@angular/fire": ["dist/packages-dist"],
         "@angular/fire/*": ["dist/packages-dist/*"]
-      }
+      },
+      "ignoreDeprecations": "6.0"
     }
   }

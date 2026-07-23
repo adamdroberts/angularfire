@@ -10,7 +10,7 @@ import { UploadTask, UploadTaskSnapshot } from '../interfaces';
 export function fromTask(task: UploadTask) {
   return new Observable<UploadTaskSnapshot>(subscriber => {
     const progress = (snap: UploadTaskSnapshot) => subscriber.next(snap);
-    const error = e => subscriber.error(e);
+    const error = (e: any) => subscriber.error(e);
     const complete = () => subscriber.complete();
     // emit the current snapshot, so they don't have to wait for state_changes
     // to fire next... this is stale if the task is no longer running :(

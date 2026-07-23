@@ -32,7 +32,7 @@ export function databaseInstanceFactory(fn: (injector: Injector) => FirebaseData
 const DATABASE_INSTANCES_PROVIDER = {
   provide: DatabaseInstances,
   deps: [
-    [new Optional(), PROVIDED_DATABASE_INSTANCES ],
+    [Optional, PROVIDED_DATABASE_INSTANCES ],
   ]
 };
 
@@ -40,7 +40,7 @@ const DEFAULT_DATABASE_INSTANCE_PROVIDER = {
   provide: Database,
   useFactory: defaultDatabaseInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_DATABASE_INSTANCES ],
+    [Optional, PROVIDED_DATABASE_INSTANCES ],
     FirebaseApp,
   ]
 };
@@ -72,8 +72,8 @@ export function provideDatabase(fn: (injector: Injector) => FirebaseDatabase, ..
         ɵAngularFireSchedulers,
         FirebaseApps,
         // Database+Auth work better if Auth is loaded first
-        [new Optional(), AuthInstances ],
-        [new Optional(), AppCheckInstances ],
+        [Optional, AuthInstances ],
+        [Optional, AppCheckInstances ],
         ...deps,
       ]
     }

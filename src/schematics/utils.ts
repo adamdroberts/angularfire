@@ -12,7 +12,6 @@ import { addRootProvider } from "@schematics/angular/utility";
 import { parse } from "yaml";
 import { overwriteIfExists, safeReadJSON, stringifyFormatted } from "./common";
 import {
-  ConnectorConfig,
   ConnectorYaml,
   DataConnectConnectorConfig,
   DataConnectYaml,
@@ -224,8 +223,8 @@ export function featureToRules(
               if (config.package) {
                 configAsStr = external("connectorConfig", config.package);
               } else {
-                configAsStr = `{${Object.keys(config.connectorConfig as ConnectorConfig).map(
-                  (key) => `${key}: "${(config.connectorConfig as ConnectorConfig)[key]}"`
+                configAsStr = `{${Object.keys(config.connectorConfig as any).map(
+                  (key) => `${key}: "${(config.connectorConfig as any)[key]}"`
                 ).join(',')}}`;
               }
               if (config.angular) {

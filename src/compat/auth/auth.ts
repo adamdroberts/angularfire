@@ -25,7 +25,7 @@ export const PERSISTENCE = new InjectionToken<string>('angularfire.auth.persiste
 
 export const ɵauthFactory = (
   app: FirebaseApp, zone: NgZone, useEmulator: UseEmulatorArguments|null,
-  tenantId: string, languageCode: string|null, useDeviceLanguage: boolean|null,
+  tenantId: string|null, languageCode: string|null, useDeviceLanguage: boolean|null,
   settings: firebase.auth.AuthSettings|null, persistence: string|null,
 ) => ɵcacheInstance(`${app.name}.auth`, 'AngularFireAuth', app.name, () => {
   const auth = zone.runOutsideAngular(() => app.auth());
@@ -35,13 +35,15 @@ export const ɵauthFactory = (
   if (tenantId) {
     auth.tenantId = tenantId;
   }
-  auth.languageCode = languageCode;
+  if (languageCode) {
+    auth.languageCode = languageCode;
+  }
   if (useDeviceLanguage) {
     auth.useDeviceLanguage();
   }
   if (settings) {
     for (const [k, v] of Object.entries(settings)) {
-      auth.settings[k] = v;
+      (auth.settings as any)[k] = v;
     }
   }
   if (persistence) {

@@ -25,14 +25,14 @@ export function ɵgetDefaultInstanceOf<T= unknown>(identifier: string, provided:
   // Grab the default instance from the defaultApp
   const defaultAppWithContainer: FirebaseAppWithContainer = defaultApp as any;
   const provider = defaultAppWithContainer.container.getProvider(identifier as never);
-  return provider.getImmediate({ optional: true });
+  return (provider.getImmediate({ optional: true }) as T) ?? undefined;
 }
 
 export const ɵgetAllInstancesOf = <T= unknown>(identifier: string, app?: FirebaseApp): T[] => {
   const apps = app ? [app] : getApps();
   const instances: any[] = [];
-  apps.forEach((app: FirebaseAppWithContainer) => {
-    const provider: any = app.container.getProvider(identifier as never);
+  apps.forEach((app: FirebaseApp) => {
+    const provider: any = (app as FirebaseAppWithContainer).container.getProvider(identifier as never);
     provider.instances.forEach((instance: any) => {
       if (!instances.includes(instance)) {
         instances.push(instance);

@@ -32,7 +32,7 @@ export function firestoreInstanceFactory(fn: (injector: Injector) => FirebaseFir
 const FIRESTORE_INSTANCES_PROVIDER = {
   provide: FirestoreInstances,
   deps: [
-    [new Optional(), PROVIDED_FIRESTORE_INSTANCES ],
+    [Optional, PROVIDED_FIRESTORE_INSTANCES ],
   ]
 };
 
@@ -40,7 +40,7 @@ const DEFAULT_FIRESTORE_INSTANCE_PROVIDER = {
   provide: Firestore,
   useFactory: defaultFirestoreInstanceFactory,
   deps: [
-    [new Optional(), PROVIDED_FIRESTORE_INSTANCES ],
+    [Optional, PROVIDED_FIRESTORE_INSTANCES ],
     FirebaseApp,
   ]
 };
@@ -73,8 +73,8 @@ export function provideFirestore(fn: (injector: Injector) => FirebaseFirestore, 
         ɵAngularFireSchedulers,
         FirebaseApps,
         // Firestore+Auth work better if Auth is loaded first
-        [new Optional(), AuthInstances ],
-        [new Optional(), AppCheckInstances ],
+        [Optional, AuthInstances ],
+        [Optional, AppCheckInstances ],
         ...deps,
       ]
     }
